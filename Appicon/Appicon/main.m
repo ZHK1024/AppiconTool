@@ -81,16 +81,9 @@ NSData * compressImage(NSImage *image, float width) {
     CGImageSourceRef source = CGImageSourceCreateWithData((CFDataRef)data, NULL);
     CGImageRef cgimage = CGImageSourceCreateImageAtIndex(source, 0, NULL);
     
-//    NSRect rect = NSMakeRect(0, 0, width, width);
-    
     NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initWithCGImage:cgimage];
     rep.size = CGSizeMake(width, width);
     NSData *pngData = [rep representationUsingType:NSBitmapImageFileTypePNG properties:@{}];
-//    NSImage *newImage = [[NSImage alloc] initWithSize:rect.size];
-//    [newImage lockFocus];
-//    CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
-//    CGContextDrawImage(context, rect, cgimage);
-//    [newImage unlockFocus];
     
     return pngData;
 }
