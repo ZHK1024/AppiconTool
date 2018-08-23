@@ -74,17 +74,26 @@ int main(int argc, const char * argv[]) {
 
 
 NSData * compressImage(NSImage *image, float width) {
-    NSData *data = image.TIFFRepresentation;
-    if (data == nil) {
+    if (image == nil) {
         return nil;
     }
+    
+    // 缩放 image
+    NSImage *smallImage = [[NSImage alloc] initWithSize: CGSizeMake(width, width)];
+    [smallImage lockFocus];
+    [image setSize: CGSizeMake(width, width)];
+    [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
+    [image drawAtPoint:NSZeroPoint fromRect:CGRectMake(0, 0, width, width) operation:NSCompositingOperationCopy fraction:1.0];
+    [smallImage unlockFocus];
+    
+    // 转换为 png 格式
+    NSData *data = smallImage.TIFFRepresentation;
+    
     CGImageSourceRef source = CGImageSourceCreateWithData((CFDataRef)data, NULL);
     CGImageRef cgimage = CGImageSourceCreateImageAtIndex(source, 0, NULL);
     
     NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initWithCGImage:cgimage];
-    rep.size = CGSizeMake(width, width);
     NSData *pngData = [rep representationUsingType:NSBitmapImageFileTypePNG properties:@{}];
-    
     return pngData;
 }
 
