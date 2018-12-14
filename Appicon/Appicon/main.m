@@ -59,7 +59,14 @@ int main(int argc, const char * argv[]) {
             // 企业版
             writeImage(image, output, 512);
             writeImage(image, output, 57);
+            
             // appstore
+            
+            // ipad
+            writeImage(image, output, 167);
+            writeImage(image, output, 152);
+            writeImage(image, output, 76);
+            // iPhone
             writeImage(image, output, 180);
             writeImage(image, output, 120);
             writeImage(image, output, 80);
@@ -77,15 +84,19 @@ NSData * compressImage(NSImage *image, float width) {
     if (image == nil) {
         return nil;
     }
+    // 要计算一下缩放因子缩放后的尺寸 (点)
+    if ([NSScreen mainScreen].backingScaleFactor > 1) {
+        width /= [NSScreen mainScreen].backingScaleFactor;
+    }
     
     // 缩放 image
     NSImage *smallImage = [[NSImage alloc] initWithSize: CGSizeMake(width, width)];
     [smallImage lockFocus];
     [image setSize: CGSizeMake(width, width)];
     [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
+    // 计算会包含屏幕缩放因子
     [image drawAtPoint:NSZeroPoint fromRect:CGRectMake(0, 0, width, width) operation:NSCompositingOperationCopy fraction:1.0];
     [smallImage unlockFocus];
-    
     // 转换为 png 格式
     NSData *data = smallImage.TIFFRepresentation;
     
